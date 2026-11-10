@@ -1,0 +1,33 @@
+[
+  {
+    "id": "duck-collector",
+    "name": "Dr. D's X-Y Example Game",
+    "description": "Use the arrow keys to navigate Dr. D around to collect the ducks and avoid her mortal enemy, Pluto. Collect all the ducks to make Dr. D happy and win the game. Touch too many Plutos, and you lose.",
+    "author": "Dr. Donaldson",
+    "platform": "Game Lab",
+    "controls": "Arrow keys to move",
+    "theme": "pond",
+    "src": "Games/Dr. D X-Y Example/My Project/index.html"
+  },
+  {
+    "id": "duck-jump",
+    "name": "Dr. D's Jumping Example Game",
+    "description": "Use the space key to make Dr. D jump and collect the ducks and avoid her mortal enemy, Pluto. Collect all the ducks to make Dr. D happy and win the game. Touch too many Plutos, and you lose.",
+    "author": "Dr. Donaldson",
+    "platform": "Game Lab",
+    "controls": "Space to jump",
+    "theme": "sunset",
+    "src": "Games/Dr. D Jumping Example/Remix_ My Project/index.html"
+  },
+  {
+    "id": "makecode-example",
+    "name": "Chase the Pizza",
+    "description": "Move the pizza with the arrow keys to meet the yellow face and earn points. The face moves to a new position after each catch. Prepared from the original MakeCode project for offline play.",
+    "author": "Author to be confirmed",
+    "platform": "MakeCode",
+    "controls": "Arrows to move · Space / Z for A · X for B",
+    "theme": "meadow",
+    "online": false,
+    "src": "Games/Chase the Pizza/index.html"
+  }
+]

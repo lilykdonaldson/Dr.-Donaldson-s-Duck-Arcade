@@ -1,0 +1,22 @@
+{
+    "name": "Chase the Pizza",
+    "description": "",
+    "dependencies": {
+        "device": "*",
+        "chase-the-pizza": "github:kiki-lee/chase-the-pizza"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md",
+        "assets.json"
+    ],
+    "targetVersions": {
+        "branch": "stable4.1",
+        "tag": "v4.1.27",
+        "commits": "https://github.com/microsoft/pxt-arcade/commits/401d844a09f01717919937e218e14e9cea9fa83a",
+        "target": "4.1.27",
+        "pxt": "13.1.24"
+    },
+    "preferredEditor": "blocksprj"
+}

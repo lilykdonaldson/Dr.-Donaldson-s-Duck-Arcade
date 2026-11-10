@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Duck Arcade · Maintenance</title><link rel="stylesheet" href="admin.css"><script src="admin.js" defer></script></head>
+<body><main>
+ <header><div><p class="eyebrow">DR. DONALDSON'S DUCK ARCADE</p><h1>Maintenance</h1></div><button id="leave">Lock & return to arcade</button></header>
+ <p id="message" role="status" aria-live="polite">Administrator access only.</p>
+ <section id="login"><h2>Unlock the cabinet</h2><p>Use your maintenance password. Games are stopped while this screen is open.</p><form id="login-form"><label for="password">Administrator password</label><input id="password" type="password" autocomplete="current-password" required maxlength="256" autofocus><button type="submit" class="primary">Unlock maintenance</button></form></section>
+ <div id="panel" hidden>
+  <section><div class="section-heading"><h2>Device & connection</h2><button id="refresh">Refresh diagnostics</button></div><pre id="diagnostics">Reading device status…</pre></section>
+  <section><div class="section-heading"><h2>Wi-Fi</h2><div><button id="enable-wifi">Enable Wi-Fi</button> <button id="scan">Scan networks</button></div></div><p>Choose a network, enter its password, then connect. Open and WPA/WPA2 personal networks are supported; WPA3-only, school enterprise Wi-Fi and captive portals require administrator setup over SSH or Ethernet.</p><div id="networks"></div><form id="wifi-form"><label for="ssid">Network name (SSID)</label><input id="ssid" required maxlength="32" autocomplete="off"><label for="wifi-password">Network password (leave blank for an open network)</label><input id="wifi-password" type="password" autocomplete="off" maxlength="63"><button class="primary" type="submit">Connect to network</button></form></section>
+  <section><h2>Arcade updates</h2><p>Download the latest committed app and games from the configured GitHub branch. The current version stays available if validation fails. The maintenance software itself is updated separately by an administrator.</p><div class="buttons"><button id="update" class="primary">Update from GitHub</button><button id="rollback">Restore previous version</button></div></section>
+  <section><h2>Power</h2><p>Shut down safely before disconnecting power. Starting again after shutdown requires the Pi's power connection or an appropriate physical power button.</p><div class="buttons"><button id="restart">Restart Pi</button><button id="shutdown" class="danger">Shut down Pi</button></div></section>
+  <p class="muted">Maintenance locks after five minutes without keyboard or pointer activity. Use a separate administrator account and SSH for advanced repairs.</p>
+ </div>
+ <dialog id="confirm-dialog"><h2 id="confirm-title">Confirm action</h2><p id="confirm-text"></p><div class="buttons"><button id="cancel">Cancel</button><button id="confirm" class="danger">Confirm</button></div></dialog>
+</main></body></html>

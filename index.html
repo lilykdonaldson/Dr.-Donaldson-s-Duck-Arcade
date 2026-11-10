@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dr. Donaldson's Duck Arcade</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="kiosk.css">
+  <script src="app.js" defer></script>
+  <script src="arcade-input.js" defer></script>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <header><a href="#" id="brand" aria-label="Dr. Donaldson's Duck Arcade — opening screen">Dr. Donaldson's Duck Arcade</a><span class="status"><i></i> STUDENT BUILT. DUCK APPROVED.</span></header>
+  <main id="app" tabindex="-1"></main>
+  <footer><span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> NAVIGATE</span><span><kbd>SPACE</kbd> SELECT</span><span class="return-hint">HOLD ALL 4 ARROWS · 3 SEC · HOME</span></footer>
+  <div id="return-progress" hidden role="status"><span>RETURNING TO THE POND…</span><progress max="3000" value="0"></progress><small>Keep holding all four arrows</small></div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+ "DeveloperToolsAvailability": 2,
+ "URLBlocklist": ["*"],
+ "URLAllowlist": ["http://127.0.0.1:8080", "http://127.0.0.1:8081", "http://127.0.0.1:8082"],
+ "AllowFileSelectionDialogs": false,
+ "DownloadRestrictions": 3,
+ "PrintingEnabled": false,
+ "PasswordManagerEnabled": false,
+ "BrowserGuestModeEnabled": false,
+ "BrowserAddPersonEnabled": false,
+ "BrowserSignin": 0,
+ "IncognitoModeAvailability": 1,
+ "SyncDisabled": true,
+ "DefaultPopupsSetting": 2,
+ "ExtensionInstallBlocklist": ["*"],
+ "DefaultNotificationsSetting": 2,
+ "DefaultGeolocationSetting": 2,
+ "DefaultBrowserSettingEnabled": false
+}

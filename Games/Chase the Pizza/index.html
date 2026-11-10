@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Chase the Pizza — offline player</title>
+ <style>
+  *{box-sizing:border-box}html,body{height:100%;margin:0;background:#111b28;color:#fff2c8;font-family:monospace}body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:12px}h1{font-size:20px;margin:0}p{margin:0;text-align:center;line-height:1.6;font-size:12px;color:#b8c9b8}#viewport{width:min(76vh,100%);aspect-ratio:1;background:#000;display:flex;align-items:center;justify-content:center;border:3px solid #ffcf49}iframe{width:100%;height:75%;border:0}button{background:#ffcf49;color:#111b28;font:bold 14px monospace;border:0;padding:12px 22px;cursor:pointer}button:focus-visible{outline:3px solid white;outline-offset:4px}#home{text-align:center;padding:20px}#home h2{margin-top:0}#hold{position:fixed;top:15%;padding:20px;background:#111b28;border:3px solid #ffcf49;z-index:2;text-align:center}progress{display:block;margin-top:10px;width:250px;accent-color:#ffcf49}[hidden]{display:none!important}
+ </style>
+ <script src="controls.js" defer></script><script src="player.js" defer></script>
+</head>
+<body>
+ <h1>CHASE THE PIZZA</h1>
+ <div id="viewport"><p id="loading">Loading local game…</p><div id="home" hidden><h2>Back at the pond</h2><p>The game has stopped.</p><br><button id="play">Space · Play again</button></div></div>
+ <p>Arrow keys to move the pizza<br>Hold ↑ ↓ ← → together for 3 seconds to return home</p>
+ <div id="hold" hidden role="status">Returning home…<progress max="3000" value="0"></progress></div>
+</body>
+</html>

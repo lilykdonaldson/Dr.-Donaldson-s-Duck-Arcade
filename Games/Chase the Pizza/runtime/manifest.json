@@ -1,0 +1,30 @@
+{
+  "downloadedAt": "2026-11-10T17:41:53.243Z",
+  "simulatorSource": "https://trg-arcade.userpxt.io/---simulator",
+  "files": [
+    {
+      "url": "https://cdn.makecode.com/blob/24326aca0059a26d983a6c1d026ec1ae0aadfe3a/sim.css",
+      "file": "runtime/597d83888aed-sim.css",
+      "sha256": "ce974478870c8c4e7d6a227bf94f19d34707e9a6e1a485a917007cb450ae598b",
+      "bytes": 60032
+    },
+    {
+      "url": "https://cdn.makecode.com/blob/829ec32a4649358f92bec09c6b049eba4c4121a3/icons.css",
+      "file": "runtime/237cf334bfb4-icons.css",
+      "sha256": "9fdc10870d138745312dbd867e42b9ee9da4fb176acdccd4dfb3d64c9a205ed9",
+      "bytes": 288192
+    },
+    {
+      "url": "https://cdn.makecode.com/blob/dae14219306176602e70093f741d0f318bbcc60f/pxtsim.js",
+      "file": "runtime/eb85f59ef104-pxtsim.js",
+      "sha256": "4976bc55c36d82d692bbbd0d6fe1d1435e8dd8c7dcff76e5aa28e02bf3baf826",
+      "bytes": 210396
+    },
+    {
+      "url": "https://cdn.makecode.com/blob/c93db950932509ff7edc6c10419c96765fd4dcb5/sim.js",
+      "file": "runtime/82b5ae49e573-sim.js",
+      "sha256": "44fbf8d94d2cd936464475afef3fe7574fc10504fa2f250e104387db8784079e",
+      "bytes": 266048
+    }
+  ]
+}

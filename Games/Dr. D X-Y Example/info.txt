@@ -1,0 +1,3 @@
+Title: Dr. D's X-Y Example Game
+Description: Use the arrow keys to navigate Dr. D around to collect the ducks and avoid her mortal enemy, Pluto. Collect all the ducks to make Dr. D happy and win the game. Touch too many plutos, and you lose.
+Coded by: Dr. Donaldson
