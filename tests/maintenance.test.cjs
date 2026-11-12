@@ -28,6 +28,22 @@ test('Maintenance requires password, same-origin requests, a live token, and pow
   await post('logout',{},newHeaders);assert.equal((await post('status',{},newHeaders)).status,401);
  }finally{await close(server);}
 });
+test('Local recovery and shutdown are unavailable before login and require confirmation',async()=>{
+ const actions=[];const server=createAdminServer({record:await passwordRecord('test-password-123'),run:async(action)=>{actions.push(action);return {};}});
+ const url=await start(server);
+ const post=(route,data={},token)=>fetch(url+'/api/'+route,{method:'POST',headers:{Origin:url,'Content-Type':'application/json','X-Arcade-Request':'maintenance',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(data)});
+ try{
+  for(const route of ['recovery','shutdown'])assert.equal((await post(route,{confirm:route})).status,401);
+  const {token}=await (await post('login',{password:'test-password-123'})).json();
+  for(const route of ['recovery','shutdown'])assert.equal((await post(route,{},token)).status,400);
+  assert.deepEqual(actions,[]);
+  assert.equal((await post('shutdown',{confirm:'shutdown'},token)).status,200);
+  assert.equal((await post('recovery',{confirm:'recovery'},token)).status,200);
+  assert.deepEqual(actions,['shutdown','recovery']);
+  assert.equal((await post('status',{},token)).status,401,'Entering local recovery revokes the maintenance token');
+ }finally{await close(server);}
+});
+
 test('Production game origin is isolated and private repository files are not served',{timeout:45000},async()=>{
  const games=createStaticServer({role:'games'});const gameOrigin=await start(games);
  const main=createStaticServer({role:'launcher',gameOrigin});const url=await start(main);let browser;
@@ -67,5 +83,10 @@ test('Maintenance panel login, network selection and power confirmation use auth
   await page.locator('#restart').click();await page.locator('#cancel').click();assert.equal(actions.filter(a=>a.action==='reboot').length,0);
   await page.locator('#restart').click();await page.locator('#confirm').click();await page.getByText('Restart requested.',{exact:false}).waitFor();
   assert.equal(actions.filter(a=>a.action==='reboot').length,1);
+  async function unlock(){await page.locator('#password').fill('test-password-123');await page.getByRole('button',{name:'Unlock maintenance'}).click();await page.locator('#panel').waitFor({state:'visible'});}
+  await unlock();await page.locator('#shutdown').click();await page.locator('#cancel').click();assert.equal(actions.filter(a=>a.action==='shutdown').length,0);
+  await page.locator('#shutdown').click();await page.locator('#confirm').click();await page.getByText('Shutdown requested.',{exact:false}).waitFor();assert.equal(actions.filter(a=>a.action==='shutdown').length,1);
+  await unlock();await page.locator('#recovery').click();await page.locator('#cancel').click();assert.equal(actions.filter(a=>a.action==='recovery').length,0);
+  await page.locator('#recovery').click();await page.locator('#confirm').click();await page.getByText('Opening the local administrator login.',{exact:false}).waitFor();assert.equal(actions.filter(a=>a.action==='recovery').length,1);assert.equal(await page.locator('#login').isVisible(),true);
  }finally{if(browser)await browser.close();await close(server);}
 });

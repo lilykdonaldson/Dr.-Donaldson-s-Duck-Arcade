@@ -22,6 +22,16 @@ class DeviceHelperTests(unittest.TestCase):
             command.assert_not_called()
             self.invoke('reboot', '{"confirm":"reboot"}')
             self.assertEqual(command.call_args.args, ('/usr/bin/systemd-run', '--quiet', '--on-active=3s', '/usr/bin/systemctl', 'reboot'))
+            self.invoke('shutdown', '{"confirm":"shutdown"}')
+            self.assertEqual(command.call_args.args, ('/usr/bin/systemd-run', '--quiet', '--on-active=3s', '/usr/bin/systemctl', 'poweroff'))
+
+    def test_recovery_requires_confirmation_and_uses_only_installed_script(self):
+        with patch.object(control, 'command') as command:
+            with self.assertRaisesRegex(ValueError, 'confirmed'):
+                self.invoke('recovery')
+            command.assert_not_called()
+            self.invoke('recovery', '{"confirm":"recovery","command":"anything"}')
+            self.assertEqual(command.call_args.args, ('/usr/bin/systemd-run', '--quiet', '--on-active=2s', '/usr/local/libexec/duck-arcade-recovery-open'))
 
     def test_update_uses_fixed_service_name(self):
         with patch.object(control, 'command') as command:

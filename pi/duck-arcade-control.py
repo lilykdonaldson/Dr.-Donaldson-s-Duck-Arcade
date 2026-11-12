@@ -28,7 +28,7 @@ def wireless():
         properties = dbus.Interface(obj, 'org.freedesktop.DBus.Properties')
         if int(properties.Get(NM + '.Device', 'DeviceType')) == 2:
             return dbus, bus, nm, props, device, dbus.Interface(obj, NM + '.Device.Wireless')
-    raise ValueError('No Wi-Fi adapter found. Check rfkill, the Wi-Fi country setting, or use Ethernet and SSH.')
+    raise ValueError('No Wi-Fi adapter found. Check rfkill and the Wi-Fi country setting from local administrator recovery or SSH.')
 
 def status():
     dbus, bus, nm, props = manager()
@@ -117,7 +117,7 @@ def main():
     if len(sys.argv) != 2:
         raise ValueError('Exactly one action is required.')
     action = sys.argv[1]
-    if action not in ['status', 'scan', 'connect', 'enable-wifi', 'update', 'rollback', 'reboot', 'shutdown']:
+    if action not in ['status', 'scan', 'connect', 'enable-wifi', 'update', 'rollback', 'reboot', 'shutdown', 'recovery']:
         raise ValueError('Unsupported device action.')
     data = json.loads(sys.stdin.read(8193) or '{}')
     if not isinstance(data, dict):
@@ -137,6 +137,11 @@ def main():
         # Both units share a file lock in the updater.
         command('/usr/bin/systemctl', 'start', '--no-block', unit)
         return {'message': 'Requested ' + action}
+    if action == 'recovery':
+        if data.get('confirm') != 'recovery':
+            raise ValueError('Recovery action must be confirmed.')
+        command('/usr/bin/systemd-run', '--quiet', '--on-active=2s', '/usr/local/libexec/duck-arcade-recovery-open')
+        return {'message': 'Local administrator login scheduled.'}
     if data.get('confirm') != action:
         raise ValueError('Power action must be confirmed.')
     # Delay allows the HTTP response to reach the panel before the service stops.
@@ -148,5 +153,5 @@ if __name__ == '__main__':
         print(json.dumps({'ok': True, 'data': main()}))
     except Exception as error:
         # Do not include subprocess arguments, connection settings, or passwords.
-        print(json.dumps({'ok': False, 'error': str(error) if isinstance(error, ValueError) else 'Device operation failed. Check NetworkManager and service logs over SSH.'}))
+        print(json.dumps({'ok': False, 'error': str(error) if isinstance(error, ValueError) else 'Device operation failed. Check logs from local administrator recovery or SSH.'}))
         sys.exit(1)

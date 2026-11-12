@@ -31,6 +31,7 @@
  $('cancel').onclick=()=>{$('confirm-dialog').close();pending=null;};
  $('confirm').onclick=event=>task(event.target,async()=>{const fn=pending;pending=null;$('confirm-dialog').close();if(fn)await fn();});
  $('rollback').onclick=()=>confirmation('Restore the previous arcade?', 'The last installed game collection will become active. This does not change Wi-Fi settings.',async()=>{await api('rollback',{confirm:'rollback'});message('Restore requested. Refresh diagnostics, then return to the arcade.');});
+ $('recovery').onclick=()=>confirmation('Open local administrator login?', 'The browser will close and the Pi will show a text login. Use your Linux administrator credentials, then type exit when finished to return to the arcade.',async()=>{await api('recovery',{confirm:'recovery'});locked();message('Opening the local administrator login. Use your Linux administrator username and password.');});
  for(const [id,action,label] of [['restart','reboot','Restart'],['shutdown','shutdown','Shut down']])$(id).onclick=()=>confirmation(`${label} the Raspberry Pi?`,'All games will stop. Save any maintenance work first.',async()=>{await api(action,{confirm:action});message(action==='shutdown'?'Shutdown requested. Wait until the Pi has finished shutting down before removing power.':'Restart requested. The arcade will return when the Pi finishes booting.');locked();});
  for(const event of ['keydown','pointerdown','pointermove'])window.addEventListener(event,activity,{passive:true});
  window.addEventListener('pagehide',()=>{token=null;});

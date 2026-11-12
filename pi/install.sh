@@ -15,8 +15,11 @@ fi
 if systemctl is-enabled --quiet lightdm.service 2>/dev/null; then
   echo 'Use a fresh Lite image; this installer does not replace an existing desktop.' >&2; exit 1
 fi
+# Package installation must not start the display manager and kill a local
+# tty1 login that is running this installer. It is enabled only at the end.
+systemctl mask greetd.service
 apt-get update
-apt-get install -y nodejs git chromium cage greetd seatd libpam-systemd python3-dbus network-manager sudo
+apt-get install -y nodejs git chromium cage greetd seatd libpam-systemd python3-dbus network-manager sudo kbd util-linux
 node -e 'if(Number(process.versions.node.split(".")[0])<18)process.exit(1)'
 for account in duckweb duckmaint duckupdate; do
   id "$account" >/dev/null 2>&1 || useradd --system --user-group --no-create-home --shell /usr/sbin/nologin "$account"
@@ -34,6 +37,8 @@ install -m 0644 "$SOURCE_DIR/scripts/set-admin-password.cjs" /usr/local/lib/duck
 install -m 0644 "$SOURCE_DIR/pi/update.cjs" /usr/local/lib/duck-arcade/pi/
 install -m 0755 "$SOURCE_DIR/pi/browser.sh" "$SOURCE_DIR/pi/session.sh" /usr/local/lib/duck-arcade/pi/
 install -m 0755 "$SOURCE_DIR/pi/duck-arcade-control.py" /usr/local/libexec/duck-arcade-control
+install -m 0755 "$SOURCE_DIR/pi/recovery-open.sh" /usr/local/libexec/duck-arcade-recovery-open
+install -m 0755 "$SOURCE_DIR/pi/recovery-resume.sh" /usr/local/libexec/duck-arcade-recovery-resume
 install -m 0644 "$SOURCE_DIR/pi/chromium-policy.json" /etc/chromium/policies/managed/duck-arcade.json
 if [[ ! -e /etc/duck-arcade/device.json ]]; then
   node - "$REPO_URL" "$REPO_BRANCH" <<'NODE'
@@ -49,7 +54,7 @@ chmod 0644 /etc/duck-arcade/device.json
 SUDO_RULE=/etc/sudoers.d/duck-arcade-maintenance
 printf 'duckmaint ALL=(root) NOPASSWD: ' > "$SUDO_RULE"
 separator=''
-for action in status scan connect enable-wifi update rollback reboot shutdown; do
+for action in status scan connect enable-wifi update rollback reboot shutdown recovery; do
   printf '%s/usr/local/libexec/duck-arcade-control %s' "$separator" "$action" >> "$SUDO_RULE"
   separator=', '
 done
@@ -121,6 +126,48 @@ ProtectHome=yes
 PrivateTmp=yes
 EOF
 done
+cat > /etc/systemd/system/duck-arcade-recovery.service <<'EOF'
+[Unit]
+Description=Duck Arcade authenticated local administrator login
+After=systemd-user-sessions.service
+Conflicts=getty@tty2.service
+[Service]
+Type=idle
+ExecStart=/sbin/agetty --noclear --timeout 120 --issue-file /etc/duck-arcade/recovery.issue tty2 linux
+ExecStopPost=/usr/local/libexec/duck-arcade-recovery-resume
+StandardInput=tty
+StandardOutput=tty
+TTYPath=/dev/tty2
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+SendSIGHUP=yes
+Restart=no
+EOF
+cat > /etc/systemd/system/duck-arcade-boot-recovery.service <<'EOF'
+[Unit]
+Description=One-shot Duck Arcade local recovery from SD-card marker
+After=systemd-user-sessions.service
+Before=greetd.service
+ConditionPathExists=/boot/firmware/duck-arcade-recovery.txt
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/duck-arcade-recovery-open --boot
+[Install]
+WantedBy=graphical.target
+EOF
+cat > /etc/duck-arcade/recovery.issue <<'EOF'
+Dr. Donaldson's Duck Arcade - LOCAL ADMINISTRATOR RECOVERY
+Sign in with the Linux administrator credentials created in Raspberry Pi Imager.
+No network or SSH connection is required. Unused login closes after 120 seconds.
+After repairs, type exit to return to the locked arcade.
+Wi-Fi: sudo nmtui
+EOF
+install -d /etc/systemd/system/greetd.service.d
+cat > /etc/systemd/system/greetd.service.d/duck-arcade-recovery.conf <<'EOF'
+[Unit]
+ConditionPathExists=!/run/duck-arcade/recovery
+EOF
 install -d /etc/greetd
 if [[ -f /etc/greetd/config.toml && ! -f /etc/greetd/config.toml.before-duck-arcade ]]; then
   cp /etc/greetd/config.toml /etc/greetd/config.toml.before-duck-arcade
@@ -143,6 +190,9 @@ printf 'kernel.sysrq = 0\n' > /etc/sysctl.d/90-duck-arcade.conf
 systemctl mask ctrl-alt-del.target getty@tty1.service getty@tty2.service getty@tty3.service getty@tty4.service getty@tty5.service getty@tty6.service
 systemctl daemon-reload
 systemctl enable --now NetworkManager.service seatd.service duck-arcade-launcher.service duck-arcade-games.service duck-arcade-maintenance.service
+systemctl unmask greetd.service
 systemctl enable greetd.service
-echo 'Installed. Keep your SSH administrator login. Reboot when ready to enter the kiosk.'
+systemctl enable duck-arcade-boot-recovery.service
+systemctl set-default graphical.target
+echo 'Installed. Keep your Linux administrator credentials. Reboot when ready to enter the kiosk.'
 echo 'Maintenance: Ctrl+Alt+M, then the password you just set.'

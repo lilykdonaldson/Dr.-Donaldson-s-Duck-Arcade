@@ -26,7 +26,7 @@ Games restart fresh each time they open. Game Lab canvases scale from 400 × 400
 
 ## Raspberry Pi kiosk
 
-For the dedicated cabinet with password-protected maintenance, Wi-Fi controls, power actions, GitHub updates, and a restricted student session, follow [the fresh Pi installation guide](pi/SETUP.md). It targets Raspberry Pi OS Lite (64-bit) and supersedes the basic desktop launch instructions below. Maintenance opens with **Ctrl+Alt+M**, then your password. The installer asks for that password on the Pi; it is not stored in Git.
+For the dedicated cabinet with password-protected maintenance, Wi-Fi controls, shutdown/restart, local administrator recovery, GitHub updates, and a restricted student session, follow [the fresh Pi installation guide](pi/SETUP.md). It targets Raspberry Pi OS Lite (64-bit) and supersedes the basic desktop launch instructions below. Maintenance opens with **Ctrl+Alt+M**, then your password. The installer asks for that password on the Pi; it is not stored in Git. SSH is optional: repairs can use a USB keyboard and the Pi's monitor, with a one-shot SD-card fallback if the web app cannot load.
 
 The following basic script is useful for a desktop preview but does not provide the dedicated cabinet's OS lockdown or management services.
 

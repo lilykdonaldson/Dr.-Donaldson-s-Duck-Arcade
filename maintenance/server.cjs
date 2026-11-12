@@ -15,7 +15,7 @@ function systemAction(action,input={}){
  if(process.platform!=='linux')return Promise.reject(Error('Device actions are available after installation on the Raspberry Pi.'));
  return new Promise((resolve,reject)=>{
   const child=execFile('/usr/bin/sudo',['-n','--','/usr/local/libexec/duck-arcade-control',action],{timeout:30000,maxBuffer:128*1024},(error,stdout)=>{
-   let result;try{result=JSON.parse(stdout);}catch{return reject(Error('Device control did not respond. Check its service log over SSH.'));}
+   let result;try{result=JSON.parse(stdout);}catch{return reject(Error('Device control did not respond. Check its service log from the local administrator login or SSH.'));}
    if(error||!result.ok)reject(Error(result.error||'Device action failed'));else resolve(result.data);
   });
   child.stdin.end(JSON.stringify(input));
@@ -63,10 +63,12 @@ function createAdminServer({record,run=systemAction,now=Date.now,idleMs=300000,u
    session.last=now();
    if(url.pathname==='/api/logout'){sessions.delete(token);return reply(200,{ok:true});}
    if(url.pathname==='/api/session')return reply(200,{ok:true});
-   const actions={'/api/status':'status','/api/wifi/scan':'scan','/api/wifi/connect':'connect','/api/wifi/enable':'enable-wifi','/api/update':'update','/api/rollback':'rollback','/api/reboot':'reboot','/api/shutdown':'shutdown'};
+   const actions={'/api/status':'status','/api/wifi/scan':'scan','/api/wifi/connect':'connect','/api/wifi/enable':'enable-wifi','/api/update':'update','/api/rollback':'rollback','/api/reboot':'reboot','/api/shutdown':'shutdown','/api/recovery':'recovery'};
    const action=actions[url.pathname];if(!action)return reply(404,{error:'Not found'});
-   if(['reboot','shutdown','rollback'].includes(action)&&input.confirm!==action)return reply(400,{error:'Action must be confirmed'});
-   return reply(200,{ok:true,data:await run(action,input)});
+   if(['reboot','shutdown','rollback','recovery'].includes(action)&&input.confirm!==action)return reply(400,{error:'Action must be confirmed'});
+   const data=await run(action,input);
+   if(action==='recovery')sessions.delete(token);
+   return reply(200,{ok:true,data});
   }catch(error){return reply(400,{error:error.message});}
  });
 }
